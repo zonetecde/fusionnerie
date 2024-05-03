@@ -2,6 +2,7 @@ import CombinaisonTable from '$lib/models/CombinaisonTable';
 import Item from '$lib/models/Item';
 import ItemTable from '$lib/models/ItemTable';
 import sequelize from '$lib/server';
+import { json } from '@sveltejs/kit';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url }: { url: URL }) {
@@ -51,11 +52,13 @@ export async function GET({ url }: { url: URL }) {
 
 		const jsonObject = JSON.parse(text);
 
-		// Si l'emoji contient du texte, on le remplace par une chaine vide
-		jsonObject.emoji = jsonObject.emoji.replace(/[^a-zA-Z0-9]/g, '');
-
-		// Si l'emoji est vide, on le remplace par `⬜`
-		if (jsonObject.emoji === '') jsonObject.emoji = '⬜';
+		// Si
+		if (
+			jsonObject.emoji.length > 3 ||
+			jsonObject.emoji === jsonObject.name ||
+			jsonObject.emoji === ''
+		)
+			jsonObject.emoji = '⬜';
 
 		// Ajoute la combinaison et l'item à la db
 		const createdItem = await ItemTable.create({
