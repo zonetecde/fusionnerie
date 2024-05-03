@@ -41,7 +41,7 @@ export async function GET({ url }: { url: URL }) {
 	try {
 		// Requête à l'IA (sur mon serveur local)
 		let response = await fetch(
-			`http://localhost:6969/gpt?prompt=🎲 Here's a challenge for you in a word combination game! You'll receive two words, and you'll need to give me the word that best fits the combination of these two. Respond with a single word and use an emoji that closely resembles the word you're writing.\n\nExample: if I give you "Chocolate" and "Store", your response should be: "Chocolaterie" with the emoji 🍫. You can provide an adjective, a noun, a proper noun, a city, a movie, a game, etc., but make sure the word exists in the dictionary.\nWhen both words are identical, you can propose an 'amplified' version of the thing. For example, for "rich" + "rich", you could answer: "The richest".\n\nWrite your response in JSON format, with two attributes: emoji (string) and name (string, representing the word in FRENCH).\n\nThe two words to combine are '${firstWord}' and '${secondWord}'. Don't forget to choose a relevant emoji for your response! If your response is 'Tornade' for example, your emoji should be 🌪️`
+			`http://localhost:6969/gpt?prompt=🎲 Here's a challenge for you in a word combination game! You'll receive two words, and you'll need to give me the word that best fits the combination of these two. Respond with a single word and use an emoji that closely resembles the word you're writing.\n\nExample: if I give you "Chocolate" and "Store", your response should be: "Chocolaterie" with the emoji 🍫. You can provide an adjective, a noun, a proper noun, a city, a movie, a game, etc., but make sure the word exists in the dictionary.\nWhen both words are identical, you can propose an 'amplified' version of the thing. For example, for "rich" + "rich", you could answer: "The richest".\n\nWrite your response in JSON format, with two attributes: emoji (string) and name (string, representing the word in FRENCH).\n\nThe two words to combine are '${firstWord}' and '${secondWord}'. Don't forget to choose a relevant emoji for your response! If your response is 'Tornade' for example, your emoji should be 🌪️\n\n\n\nTwo same words should not give the same word in plural. Moreover, two words should not be fused together, like for exemple : earth and air should not give earth-air, but for exemple, wind. You should ALWAYS give a different word than the words I gave you. Moreover, the anwser can be an action. For exemple, "Sapeur-Pompier" with "incendie" should be "Sauvegate". Incendie et crash devrait donner 'Catastrophe'`
 		);
 
 		let text = await response.json();
@@ -56,7 +56,7 @@ export async function GET({ url }: { url: URL }) {
 		jsonObject.name = jsonObject.name.charAt(0).toUpperCase() + jsonObject.name.slice(1);
 
 		if (
-			jsonObject.emoji.length > 3 ||
+			jsonObject.emoji.length > 2 ||
 			jsonObject.emoji === jsonObject.name ||
 			jsonObject.emoji === ''
 		)
@@ -80,7 +80,8 @@ export async function GET({ url }: { url: URL }) {
 		});
 
 		return new Response(JSON.stringify(new Item(jsonObject.emoji, jsonObject.name, item[1])));
-	} catch {
+	} catch (e: any) {
+		console.log("Erreur dans la requête à l'IA" + e);
 		// Combinaison impossible
 		return new Response('none');
 	}

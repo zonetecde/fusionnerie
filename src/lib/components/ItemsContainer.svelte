@@ -4,15 +4,17 @@
 	import { onMount } from 'svelte';
 	import ItemComponent from './ItemComponent.svelte';
 	import { checkSearchFilter } from '$lib/utils';
-	import { PlaygroundComponent } from '$lib/stores/LayoutStore';
+	import { PlaygroundComponent, ShowCrafts } from '$lib/stores/LayoutStore';
 
 	let searchFilter = '';
 
 	onMount(() => {
 		// Charge les items du joueur sauvergardé
 		const savedData = localStorage.getItem('playerItems');
+
 		if (savedData) {
 			PlayerItems.set(JSON.parse(savedData));
+			PlayerCombinaisons.set(JSON.parse(localStorage.getItem('playerCombinaisons') || '[]'));
 		} else {
 			// Première connexion, donne au joueur les 4 items de départ
 			PlayerItems.set([
@@ -27,14 +29,30 @@
 	});
 </script>
 
-<section
-	class="w-full h-full flex-wrap flex-row flex px-4 py-6 gap-x-4 overflow-y-scroll gap-y-3 relative"
->
-	{#each $PlayerItems as item}
-		{#if searchFilter === '' || checkSearchFilter(searchFilter, item.name)}
-			<ItemComponent {item} />
-		{/if}
-	{/each}
+<section class="w-full h-full relative flex flex-row">
+	<div class="w-full h-full flex-wrap flex-row flex px-4 py-6 gap-x-4 overflow-y-scroll gap-y-4">
+		{#each $PlayerItems as item}
+			{#if searchFilter === '' || checkSearchFilter(searchFilter, item.name)}
+				<ItemComponent {item} />
+			{/if}
+		{/each}
+	</div>
+
+	{#if $ShowCrafts.length !== 0}
+		<div class="md:block hidden w-2/12 pt-6 px-1 overflow-y-auto">
+			{#each $ShowCrafts as combinaison}
+				<div
+					class="flex flex-row items-center justify-between px-4 py-2 bg-[#e7edf0] border-2 border-[#20423a] rounded-xl mb-2"
+				>
+					<div class="flex flex-row items-center">
+						<span class="text-xl"
+							>{combinaison.firstWord} ➕ {combinaison.secondWord} ➡️ {combinaison.result}</span
+						>
+					</div>
+				</div>
+			{/each}
+		</div>
+	{/if}
 </section>
 
 <!-- Barre de recherche -->

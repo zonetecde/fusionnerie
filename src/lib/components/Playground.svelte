@@ -13,8 +13,6 @@
 		if (SPAWNING_SPACE < 80) {
 			SPAWNING_SPACE = 80;
 		}
-
-		console.log('SPAWNING_SPACE', SPAWNING_SPACE);
 	});
 
 	export function placeItem(item: Item) {

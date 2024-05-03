@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type Item from '$lib/models/Item';
-	import { FetchingItems, PlaygroundComponent } from '$lib/stores/LayoutStore';
+	import { FetchingItems, PlaygroundComponent, ShowCrafts } from '$lib/stores/LayoutStore';
 	import { PlayerCombinaisons, PlayerItems, savePlayerData } from '$lib/stores/PlayerDataStore';
 	import { checkCollision } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
@@ -37,9 +37,19 @@
 		isBeingDragged = false;
 	}
 
-	function handleMouseDown() {
-		if (isInPlayground) {
-			isBeingDragged = true;
+	function handleMouseDown(e: any) {
+		// Si clique gauche
+		if (e.button === 0) {
+			if (isInPlayground) {
+				isBeingDragged = true;
+			} else {
+				// Crée une copie de l'item pour le drag sur la fenêtre
+			}
+		}
+		// Si clique droit
+		if (e.button === 2) {
+			// Affiche les crafts possibles
+			ShowCrafts.set($PlayerCombinaisons.filter((x) => x.result === item.name));
 		}
 	}
 
@@ -81,6 +91,7 @@
 							if (combinedItem !== undefined) {
 								// Enlève itemButton et remplace ce component par le nouvelle item
 								itemButton.remove();
+
 								$PlaygroundComponent.modifyItem(item, combinedItem);
 							}
 							savePlayerData($PlayerItems, $PlayerCombinaisons);
@@ -109,12 +120,13 @@
 
 		// Regarde si l'item a déjà été découvert par l'utilisateur
 		if (!$PlayerItems.some((x) => x.name === combinedItem.name)) {
-			PlayerItems.set([...$PlayerItems, combinedItem]);
-			PlayerCombinaisons.set([
-				...$PlayerCombinaisons,
-				{ firstWord: firstWord, secondWord: secondWord, result: combinedItem.name }
-			]);
+			PlayerItems.set([combinedItem, ...$PlayerItems]);
 		}
+
+		PlayerCombinaisons.set([
+			{ firstWord: firstWord, secondWord: secondWord, result: combinedItem.name },
+			...$PlayerCombinaisons
+		]);
 
 		// Retounr l'item
 		return combinedItem;
@@ -128,7 +140,7 @@
 			? ' bg-slate-600 shadow-none border-[#2f3834] scale-75 hover:scale-75 '
 			: '')}
 	style={isInPlayground ? `position: absolute; left: ${x}px; top: ${y}px` : ''}
-	id={item.id + '_itemcomp_' + item.name}
+	id={$FetchingItems.includes(item.id) ? '' : item.id + '_itemcomp_' + item.name}
 	on:click={placeOnPlayground}
 	on:mousedown={handleMouseDown}
 	on:pointerdown={handleMouseDown}
