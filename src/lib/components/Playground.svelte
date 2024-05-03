@@ -6,13 +6,26 @@
 	import { randomNumber } from '$lib/utils';
 
 	let itemsOnBoard: Item[] = [];
-	const SPAWNING_SPACE = 100;
+	let SPAWNING_SPACE = 100;
+
+	onMount(() => {
+		SPAWNING_SPACE = (document.getElementById('playground')!.clientHeight * 0.6) / 3;
+		if (SPAWNING_SPACE < 80) {
+			SPAWNING_SPACE = 80;
+		}
+
+		console.log('SPAWNING_SPACE', SPAWNING_SPACE);
+	});
 
 	export function placeItem(item: Item) {
 		// copy the item to avoid modifying the original
 		item = { ...item };
 		item.id = randomNumber(0, 1000000);
 		itemsOnBoard = [...itemsOnBoard, item];
+	}
+
+	export function clear() {
+		itemsOnBoard = [];
 	}
 
 	export function modifyItem(oldItem: Item, newItem: Item) {

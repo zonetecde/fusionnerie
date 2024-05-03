@@ -60,10 +60,8 @@ export async function GET({ url }: { url: URL }) {
 		)
 			jsonObject.emoji = '⬜';
 
-		// Si l'item existe déjà, on le retourne
-
 		// Ajoute la combinaison et l'item à la db
-		const createdItem = await ItemTable.findOrCreate({
+		const item = await ItemTable.findOrCreate({
 			where: {
 				name: jsonObject.name
 			},
@@ -76,10 +74,10 @@ export async function GET({ url }: { url: URL }) {
 		await CombinaisonTable.create({
 			firstWord: firstWord,
 			secondWord: secondWord,
-			result: createdItem[0].id
+			result: item[0].id
 		});
 
-		return new Response(JSON.stringify(new Item(jsonObject.emoji, jsonObject.name, true)));
+		return new Response(JSON.stringify(new Item(jsonObject.emoji, jsonObject.name, item[1])));
 	} catch {
 		// Combinaison impossible
 		return new Response('none');
