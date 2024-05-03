@@ -125,7 +125,7 @@
 	class={'relative border-2 border-[#717e79] shadow-lg shadow-[#2a2f44] bg-[#d6ecf3] md:text-xl rounded-lg px-3 h-fit py-1 hover:scale-110 duration-150 select-none outline-none w-max ' +
 		(item.firstDiscovery && isInPlayground === false ? ' rounded-br-none mb-3 ' : '') +
 		($FetchingItems.includes(item.id) && isInPlayground === true
-			? ' bg-[#54617a] shadow-none border-[#2f3834] scale-75 '
+			? ' bg-slate-600 shadow-none border-[#2f3834] scale-75 hover:scale-75 '
 			: '')}
 	style={isInPlayground ? `position: absolute; left: ${x}px; top: ${y}px` : ''}
 	id={item.id + '_itemcomp_' + item.name}
