@@ -38,7 +38,7 @@ export async function GET({ url }: { url: URL }) {
 	}
 
 	try {
-		// Requête à l'IA
+		// Requête à l'IA (sur mon serveur local)
 		let response = await fetch(
 			`http://localhost:6969/gpt?prompt=🎲 Here's a challenge for you in a word combination game! You'll receive two words, and you'll need to give me the word that best fits the combination of these two. Respond with a single word and use an emoji that closely resembles the word you're writing.\n\nExample: if I give you "Chocolate" and "Store", your response should be: "Chocolaterie" with the emoji 🍫. You can provide an adjective, a noun, a proper noun, a city, a movie, a game, etc., but make sure the word exists in the dictionary.\nWhen both words are identical, you can propose an 'amplified' version of the thing. For example, for "rich" + "rich", you could answer: "The richest".\n\nWrite your response in JSON format, with two attributes: emoji (string) and name (string, representing the word in FRENCH).\n\nThe two words to combine are '${firstWord}' and '${secondWord}'. Don't forget to choose a relevant emoji for your response! If your response is 'Tornade' for example, your emoji should be 🌪️`
 		);
@@ -50,6 +50,12 @@ export async function GET({ url }: { url: URL }) {
 		else if (text.startsWith('```')) text = text.slice(3, -3);
 
 		const jsonObject = JSON.parse(text);
+
+		// Si l'emoji contient du texte, on le remplace par une chaine vide
+		jsonObject.emoji = jsonObject.emoji.replace(/[^a-zA-Z0-9]/g, '');
+
+		// Si l'emoji est vide, on le remplace par `⬜`
+		if (jsonObject.emoji === '') jsonObject.emoji = '⬜';
 
 		// Ajoute la combinaison et l'item à la db
 		const createdItem = await ItemTable.create({
