@@ -60,16 +60,23 @@ export async function GET({ url }: { url: URL }) {
 		)
 			jsonObject.emoji = '⬜';
 
+		// Si l'item existe déjà, on le retourne
+
 		// Ajoute la combinaison et l'item à la db
-		const createdItem = await ItemTable.create({
-			name: jsonObject.name,
-			emoji: jsonObject.emoji
+		const createdItem = await ItemTable.findOrCreate({
+			where: {
+				name: jsonObject.name
+			},
+			defaults: {
+				name: jsonObject.name,
+				emoji: jsonObject.emoji
+			}
 		});
 
 		await CombinaisonTable.create({
 			firstWord: firstWord,
 			secondWord: secondWord,
-			result: createdItem.id
+			result: createdItem[0].id
 		});
 
 		return new Response(JSON.stringify(new Item(jsonObject.emoji, jsonObject.name, true)));
