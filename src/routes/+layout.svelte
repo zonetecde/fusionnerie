@@ -4,7 +4,7 @@
 
 <slot />
 
-<div class="absolute top-0 right-0 bg-[#ffffff71] px-4 py-1 rounded-bl-xl">
+<div class="absolute top-0 right-0 bg-[#ffffff71] px-4 py-1 rounded-bl-xl md:block hidden">
 	Par <a
 		href="https://www.rayanestaszewski.fr"
 		target="_blank"
