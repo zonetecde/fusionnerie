@@ -52,7 +52,9 @@ export async function GET({ url }: { url: URL }) {
 
 		const jsonObject = JSON.parse(text);
 
-		// Si
+		// Met la première lettre en majuscule
+		jsonObject.name = jsonObject.name.charAt(0).toUpperCase() + jsonObject.name.slice(1);
+
 		if (
 			jsonObject.emoji.length > 3 ||
 			jsonObject.emoji === jsonObject.name ||
