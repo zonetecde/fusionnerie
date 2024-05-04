@@ -83,9 +83,9 @@ async function askGpt(firstWord: string, secondWord: string) {
 	jsonObject.name = jsonObject.name.charAt(0).toUpperCase() + jsonObject.name.slice(1);
 
 	let emojisArray = jsonObject.emoji.match(/\p{Emoji}+/gu) || [];
-	let emojisString = emojisArray.join('');
+	jsonObject.emoji = emojisArray.join('');
 
-	if (emojisString === '') jsonObject.emoji = '⬜';
+	if (jsonObject.emoji === '') jsonObject.emoji = '⬜';
 
 	// Ajoute la combinaison et l'item à la db
 	const item = await ItemTable.findOrCreate({
