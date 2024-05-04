@@ -139,26 +139,26 @@
 			PlayerItems.set(JSON.parse(savedData));
 			PlayerCombinaisons.set(JSON.parse(savedCombinaisons));
 
-			// Enlève toutes les combinaisons en duplication, en sachant que firstWord + secondWord = secondWord + firstWord
-			const uniqueCombinaisons = removeDuplicateCombinaisons($PlayerCombinaisons);
-			PlayerCombinaisons.set(uniqueCombinaisons);
+			// // Enlève toutes les combinaisons en duplication, en sachant que firstWord + secondWord = secondWord + firstWord
+			// const uniqueCombinaisons = removeDuplicateCombinaisons($PlayerCombinaisons);
+			// PlayerCombinaisons.set(uniqueCombinaisons);
 
-			// Update les emojis des items du joueurs en cas de changement de l'emoji
-			const response = await fetch('/fusionnerie/api/update-items', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: savedData
-			});
+			// // Update les emojis des items du joueurs en cas de changement de l'emoji
+			// const response = await fetch('/fusionnerie/api/update-items', {
+			// 	method: 'POST',
+			// 	headers: {
+			// 		'Content-Type': 'application/json'
+			// 	},
+			// 	body: savedData
+			// });
 
-			// Récupère les items mis à jour
-			const updatedItems = await response.json();
-			PlayerItems.set(updatedItems);
-			toast('Données chargées !', {
-				icon: '📦',
-				position: 'bottom-left'
-			});
+			// // Récupère les items mis à jour
+			// const updatedItems = await response.json();
+			// PlayerItems.set(updatedItems);
+			// toast('Données chargées !', {
+			// 	icon: '📦',
+			// 	position: 'bottom-left'
+			// });
 		} else {
 			// Première connexion, donne au joueur les 4 items de départ
 			PlayerItems.set([new Item('💧', 'Eau', false), new Item('🔥', 'Feu', false), new Item('🌍', 'Terre', false), new Item('💨', 'Air', false)]);
@@ -263,8 +263,10 @@
 
 {#if saveDataModalVisible}
 	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
-		<div class="bg-[#e7edf0] w-96 h-52 rounded-xl flex flex-col items-center justify-center relative">
+		<div class="bg-[#e7edf0] w-96 px-4 h-60 rounded-xl flex flex-col items-center justify-center relative">
 			<h2 class="text-xl">Sauvegarde de votre progrès</h2>
+
+			<p class="text-center mt-3">Attention, quiconque écrivant le même identifiant pourra écraser votre progrès !</p>
 
 			<input
 				type="text"
