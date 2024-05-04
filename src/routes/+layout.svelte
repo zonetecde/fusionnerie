@@ -11,6 +11,11 @@
 		window.oncontextmenu = function () {
 			return false;
 		};
+
+		const _uniqueId = localStorage.getItem('uniqueId');
+		if (_uniqueId) {
+			uniqueId = _uniqueId;
+		}
 	});
 
 	async function unlockAllItems() {
@@ -32,6 +37,15 @@
 	let uniqueId = '';
 
 	async function handleSaveMyDataButtonClicked() {
+		if (uniqueId === '') {
+			toast('Veuillez entrer un identifiant unique', {
+				icon: '❌'
+			});
+			return;
+		}
+
+		localStorage.setItem('uniqueId', uniqueId);
+
 		const response = await fetch('/fusionnerie/api/save-user-data', {
 			method: 'POST',
 			headers: {
@@ -57,6 +71,15 @@
 	}
 
 	async function handleLoadMyDataButtonClicked() {
+		if (uniqueId === '') {
+			toast('Veuillez entrer un identifiant unique', {
+				icon: '❌'
+			});
+			return;
+		}
+
+		localStorage.setItem('uniqueId', uniqueId);
+
 		toast('Chargement de votre progrès...', {
 			icon: '⌛'
 		});
