@@ -2,7 +2,7 @@
 	import type Item from '$lib/models/Item';
 	import { DraggingItem, FetchingItems, PlaygroundComponent, ShowCrafts, isMobile } from '$lib/stores/LayoutStore';
 	import { PlayerCombinaisons, PlayerItems, savePlayerData } from '$lib/stores/PlayerDataStore';
-	import { checkCollision } from '$lib/utils';
+	import { checkCollision, playAudio, randomNumber } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
 
 	export let item: Item;
@@ -63,6 +63,7 @@
 			// On vérifie si l'item est en collision avec un autre item
 			checkForAssociation();
 			isBeingDragged = false;
+			playAudio(`/fusionnerie/audio/click${randomNumber(1, 3)}.mp3`);
 		} else {
 			// Si l'item est dans le conteneur à item, on prévient que le clique est relaché (pour éviter le drag)
 			isMouseUp = true;
@@ -81,6 +82,7 @@
 			// Si il est dans le playground - simple drag dedans
 			if (isInPlayground) {
 				isBeingDragged = true;
+				playAudio(`/fusionnerie/audio/click${randomNumber(1, 3)}.mp3`, 0.5);
 			} else {
 				// Sinon, on attend 100ms pour voir si le clique est relaché
 				setTimeout(() => {
@@ -96,6 +98,8 @@
 						// Sinon c'est qu'un simple clique - place l'item sur le playground
 						placeOnPlayground();
 					}
+
+					playAudio(`/fusionnerie/audio/drag${randomNumber(1, 3)}.mp3`, 0.5);
 				}, 100);
 			}
 		}
@@ -162,6 +166,7 @@
 								// Enlève l'item avec lequel il y a eu collision et remplace ce component par le nouvelle item
 								colliderItemButton.remove();
 								$PlaygroundComponent.modifyItem(item, combinedItem);
+								playAudio(`/fusionnerie/audio/combine1.mp3`, 0.5);
 							}
 
 							// Sauvegarde les données
