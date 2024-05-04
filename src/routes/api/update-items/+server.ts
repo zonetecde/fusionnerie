@@ -6,6 +6,9 @@ export async function POST({ request }: { request: Request }) {
 	const body = await request.json();
 
 	// Récupère les données
+	if (body === null) {
+		return new Response('Erreur');
+	}
 
 	await Promise.allSettled(
 		body.map(async (item: any) => {

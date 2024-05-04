@@ -14,7 +14,6 @@
 
 		if (savedData) {
 			PlayerItems.set(JSON.parse(savedData));
-
 			// Update les items du joueurs (au cas où il y a eu des modifs de l'emoji)
 			const response = await fetch('/fusionnerie/api/update-items', {
 				method: 'POST',

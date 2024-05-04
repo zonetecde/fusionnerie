@@ -1,5 +1,6 @@
 import CombinaisonTable from '$lib/models/CombinaisonTable';
 import ItemTable from '$lib/models/ItemTable';
+import UserDataTable from '$lib/models/UserDataTable';
 import { Sequelize } from '@sequelize/core';
 import dotenv from 'dotenv';
 
@@ -12,6 +13,9 @@ if (!ItemTable.isInitialized()) {
 }
 if (!CombinaisonTable.isInitialized()) {
 	sequelize.addModels([CombinaisonTable]);
+}
+if (!UserDataTable.isInitialized()) {
+	sequelize.addModels([UserDataTable]);
 }
 
 sequelize.sync({ alter: true });
