@@ -35,6 +35,11 @@
 	});
 
 	async function unlockAllItems() {
+		toast('Cette fonctionnalité est réservée au développeur', {
+			icon: '🔓'
+		});
+		return;
+
 		toast.promise(
 			(async () => {
 				// Récupère tous les items et combinaisons existants
