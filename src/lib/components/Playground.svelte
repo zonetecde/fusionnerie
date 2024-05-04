@@ -24,7 +24,7 @@
 	});
 
 	async function setTotalDecouvert() {
-		totalDecouvert = await fetch('/fusionnerie/api/total-decouvert').then((res) => res.json());
+		totalDecouvert = await fetch('/fusionnerie/api/total-decouvert?').then((res) => res.json());
 	}
 
 	export function placeItem(item: Item, x: number = -1, y: number = -1, checkForAssociation = false) {
