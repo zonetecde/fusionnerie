@@ -15,3 +15,4 @@ export const DraggingItem: Writable<
 	| undefined
 > = writable(undefined);
 export const isMobile: Writable<boolean> = writable(false);
+export const ShowMobileSettings: Writable<boolean> = writable(false);

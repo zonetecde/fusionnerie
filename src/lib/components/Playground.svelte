@@ -76,20 +76,20 @@
 </div>
 <div class="hidden md:block">
 	<p
-		class="absolute bg-[#d2dbdf] border-r-4 border-t-4 top-0 right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
+		class="absolute select-none bg-[#d2dbdf] border-r-4 border-t-4 top-0 right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
 	>
 		<span class="mono font-bold text-lg md:text-xl">{totalDecouvert.toString().padStart(6, '0')}</span> items découverts par la communauté
 	</p>
 
 	<p
-		class="absolute bg-[#d2dbdf] border-r-4 top-10 md:top-[3.3rem] right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
+		class="absolute select-none bg-[#d2dbdf] border-r-4 top-10 md:top-[3.3rem] right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
 	>
 		<span class="mono font-bold text-lg md:text-xl">{itemsDecouvertParVous.toString().padStart(6, '0')}</span> item{itemsDecouvertParVous > 1
 			? 's'
 			: ''} découvert{itemsDecouvertParVous > 1 ? 's' : ''} par vous
 	</p>
 	<p
-		class="absolute bg-[#d2dbdf] border-r-4 top-20 md:top-[6.3rem] right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
+		class="absolute select-none bg-[#d2dbdf] border-r-4 top-20 md:top-[6.3rem] right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
 	>
 		<span class="mono font-bold text-lg md:text-xl">{$PlayerItems.length.toString().padStart(6, '0')}</span> item{$PlayerItems.length > 1 ? 's' : ''}
 		possédé{$PlayerItems.length > 1 ? 's' : ''}

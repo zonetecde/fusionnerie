@@ -3,13 +3,14 @@
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import toast, { Toaster } from 'svelte-french-toast';
-	import { isMobile } from '$lib/stores/LayoutStore';
+	import { ShowMobileSettings, isMobile } from '$lib/stores/LayoutStore';
 	import Item from '$lib/models/Item';
 	import type Combinaison from '$lib/models/Combinaison';
 
 	let saveDataModalVisible = false;
 	let loadDataModalVisible = false;
 	let cheatWarningVisible = false;
+	let eraseDataWarningVisible = false;
 
 	onMount(async () => {
 		// Empêche le clic droit
@@ -190,6 +191,76 @@
 <Toaster />
 <slot />
 
+{#if $ShowMobileSettings}
+	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
+		<div class="bg-[#e7edf0] w-11/12 h-80 px-3 rounded-xl flex flex-col items-center justify-center relative">
+			<h2 class="text-xl">Paramètres</h2>
+
+			<!-- Sauvegarder ses données -->
+			<button class="bg-[#20423a] text-white px-4 py-2 rounded-xl mt-4" on:click={() => (saveDataModalVisible = true)}>
+				Sauvegarder mon progrès
+			</button>
+
+			<!-- Charger ses données -->
+			<button class="bg-[#20423a] text-white px-4 py-2 rounded-xl mt-4" on:click={() => (loadDataModalVisible = true)}> Charger mon progrès </button>
+
+			<!-- Tricher -->
+			<button class="bg-[#20423a] text-white px-4 py-2 rounded-xl mt-4" on:click={() => (cheatWarningVisible = true)}> Tricher </button>
+
+			<!-- Supprimer ses données -->
+			<button class="bg-[#20423a] text-white px-4 py-2 rounded-xl mt-4" on:click={() => (eraseDataWarningVisible = true)}>
+				Supprimer mon progrès
+			</button>
+
+			<button
+				on:click={() => {
+					ShowMobileSettings.set(false);
+				}}
+				class="absolute top-0 right-0"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+					<path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+				</svg>
+			</button>
+		</div>
+	</div>
+{/if}
+
+{#if eraseDataWarningVisible}
+	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
+		<div class="bg-[#e7edf0] w-96 h-60 px-4 rounded-xl flex flex-col items-center justify-center relative">
+			<h2 class="text-xl">Suppression de votre progrès</h2>
+			<p class="text-center mt-5">
+				Êtes-vous sûr de vouloir supprimer tout les items que vous avez découvert ? Nous vous recommendons de d'abord faire une sauvegarde.
+			</p>
+
+			<button
+				class="bg-[#20423a] text-white px-4 py-2 rounded-xl mt-4"
+				on:click={() => {
+					localStorage.removeItem('playerItems');
+					localStorage.removeItem('playerCombinaisons');
+					PlayerItems.set([new Item('💧', 'Eau', false), new Item('🔥', 'Feu', false), new Item('🌍', 'Terre', false), new Item('💨', 'Air', false)]);
+					PlayerCombinaisons.set([]);
+					eraseDataWarningVisible = false;
+				}}
+			>
+				Oui, je veux tout supprimer
+			</button>
+
+			<button
+				on:click={() => {
+					eraseDataWarningVisible = false;
+				}}
+				class="absolute top-0 right-0"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+					<path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+				</svg>
+			</button>
+		</div>
+	</div>
+{/if}
+
 {#if saveDataModalVisible}
 	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
 		<div class="bg-[#e7edf0] w-96 h-52 rounded-xl flex flex-col items-center justify-center relative">
@@ -276,8 +347,7 @@
 <button
 	class="absolute bottom-0 right-0 bg-[#ffffff71] px-4 md:block hidden text-sm hover:bg-[#ffffffad]"
 	on:click={() => {
-		localStorage.clear();
-		location.reload();
+		eraseDataWarningVisible = true;
 	}}
 >
 	Supprimer mon progrès
