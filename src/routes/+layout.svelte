@@ -35,11 +35,6 @@
 	});
 
 	async function unlockAllItems() {
-		toast('Cette fonctionnalité est réservée au développeur', {
-			icon: '🔓'
-		});
-		return;
-
 		toast.promise(
 			(async () => {
 				// Récupère tous les items et combinaisons existants
@@ -326,6 +321,11 @@
 			<button
 				class="bg-[#20423a] text-white px-4 py-2 rounded-xl mt-4"
 				on:click={() => {
+					toast('Cette fonctionnalité est réservée au développeur', {
+						icon: '🔓'
+					});
+					return;
+
 					cheatWarningVisible = false;
 					unlockAllItems();
 				}}
