@@ -78,7 +78,7 @@
 	<p
 		class="absolute top-0 right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
 	>
-		<span class="mono font-bold text-lg md:text-xl">{totalDecouvert.toString().padStart(6, '0')}</span> items découvert par la communauté
+		<span class="mono font-bold text-lg md:text-xl">{totalDecouvert.toString().padStart(6, '0')}</span> items découverts par la communauté
 	</p>
 
 	<p
@@ -86,7 +86,7 @@
 	>
 		<span class="mono font-bold text-lg md:text-xl">{itemsDecouvertParVous.toString().padStart(6, '0')}</span> item{itemsDecouvertParVous > 1
 			? 's'
-			: ''} découvert par vous
+			: ''} découvert{itemsDecouvertParVous > 1 ? 's' : ''} par vous
 	</p>
 	<p
 		class="absolute top-20 md:top-24 right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
