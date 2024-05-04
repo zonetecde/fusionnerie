@@ -64,14 +64,17 @@ export async function GET({ url }: { url: URL }) {
 
 		// Ajoute la combinaison et l'item à la db
 		const item = await ItemTable.findOrCreate({
-			where: {
-				name: jsonObject.name
-			},
+			where: sequelize.where(
+				sequelize.fn('lower', sequelize.col('name')),
+				sequelize.fn('lower', jsonObject.name)
+			),
 			defaults: {
 				name: jsonObject.name,
 				emoji: jsonObject.emoji
 			}
 		});
+
+		console.log(item);
 
 		await CombinaisonTable.create({
 			firstWord: firstWord,

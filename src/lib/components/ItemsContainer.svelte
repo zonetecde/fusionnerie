@@ -8,12 +8,23 @@
 
 	let searchFilter = '';
 
-	onMount(() => {
+	onMount(async () => {
 		// Charge les items du joueur sauvergardé
 		const savedData = localStorage.getItem('playerItems');
 
 		if (savedData) {
 			PlayerItems.set(JSON.parse(savedData));
+
+			// Update les items du joueurs (au cas où il y a eu des modifs de l'emoji)
+			const response = await fetch('/fusionnerie/api/update-items', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: savedData
+			});
+			const updatedItems = await response.json();
+			PlayerItems.set(updatedItems);
 			PlayerCombinaisons.set(JSON.parse(localStorage.getItem('playerCombinaisons') || '[]'));
 		} else {
 			// Première connexion, donne au joueur les 4 items de départ
