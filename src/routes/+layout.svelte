@@ -18,7 +18,7 @@
 		};
 
 		// Charge l'identifiant unique du joueur
-		const _uniqueId = localStorage.getItem('uniqueId');
+		const _uniqueId = localStorage.getItem('fusionnerieUniqueId');
 		if (_uniqueId) {
 			uniqueId = _uniqueId;
 		}
@@ -64,7 +64,7 @@
 			return;
 		}
 
-		localStorage.setItem('uniqueId', uniqueId);
+		localStorage.setItem('fusionnerieUniqueId', uniqueId);
 
 		const response = await fetch('/fusionnerie/api/save-user-data', {
 			method: 'POST',
@@ -98,7 +98,7 @@
 			return;
 		}
 
-		localStorage.setItem('uniqueId', uniqueId);
+		localStorage.setItem('fusionnerieUniqueId', uniqueId);
 
 		toast('Chargement de votre progrès...', {
 			icon: '⌛'
