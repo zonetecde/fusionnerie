@@ -12,6 +12,8 @@
 	export let y: number = 0;
 	export let checkForAssociationOnMount: boolean = false; // A la fin du drag
 
+	// Attention ! A chaque fois qu'on ajoute une variable ici, il faut changer l'index dans le .ctx (+page.svelte)
+	let isNewItem = false;
 	let isBeingDragged = false;
 	let thisComponent: HTMLButtonElement;
 
@@ -175,6 +177,15 @@
 								colliderItemButton.remove();
 								$PlaygroundComponent.modifyItem(item, combinedItem);
 								playAudio(`/fusionnerie/audio/combine1.mp3`, 0.5);
+
+								// Si c'est un nouvel item
+								if (combinedItem.firstDiscovery) {
+									isNewItem = true;
+
+									setTimeout(() => {
+										isNewItem = false;
+									}, 1000);
+								}
 							}
 
 							// Sauvegarde les données
@@ -227,6 +238,15 @@
 	}
 </script>
 
+{#if isInPlayground && isNewItem}
+	<img
+		src="/fusionnerie/confetti.gif"
+		alt="confetti"
+		class="absolute w-48 -translate-x-5 -translate-y-16"
+		style={'left: ' + x + 'px; top: ' + y + 'px;'}
+	/>
+{/if}
+
 <button
 	class={'relative border-2 border-[#717e79] shadow-lg shadow-[#2a2f44] bg-[#d6ecf3] md:text-xl rounded-lg px-3 h-fit py-1 hover:scale-110 duration-150 select-none outline-none w-max ' +
 		(item.firstDiscovery && isInPlayground === false ? ' rounded-br-none mb-3 ' : '') +
@@ -239,7 +259,7 @@
 	on:pointerup={handleMouseUp}
 	bind:this={thisComponent}
 >
-	<span>
+	<span class="">
 		{item.emoji}
 		{item.name}
 	</span>
