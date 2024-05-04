@@ -45,9 +45,20 @@ export async function GET({ url }: { url: URL }) {
 		// Refait une requête à l'IA (deuxième essai)
 		try {
 			console.log('deuxième essai');
+			await new Promise((resolve) => setTimeout(resolve, 500));
 			return await askGpt(firstWord, secondWord);
 		} catch (e: any) {
-			console.log(e);
+			// refait une requête à l'IA (troisième essai)
+			try {
+				console.log('troisième essai');
+				// attend 1 seconde
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+				return await askGpt(firstWord, secondWord);
+			} catch (e: any) {
+				// Combinaison impossible
+
+				console.log(e);
+			}
 		}
 	}
 
