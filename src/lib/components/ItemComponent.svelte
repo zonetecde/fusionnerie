@@ -163,6 +163,14 @@
 
 							// Si la combinaison a réussi
 							if (combinedItem !== undefined) {
+								// Si l'item combiné est le même que l'item actuel ou l'item avec lequel il y a eu collision
+								if (combinedItem.name === item.name || combinedItem.name === colliderItemName) {
+									// Audio d'erreur
+									console.log('Erreur de combinaison');
+									playAudio(`/fusionnerie/audio/error.mp3`, 0.5);
+									return;
+								}
+
 								// Enlève l'item avec lequel il y a eu collision et remplace ce component par le nouvelle item
 								colliderItemButton.remove();
 								$PlaygroundComponent.modifyItem(item, combinedItem);

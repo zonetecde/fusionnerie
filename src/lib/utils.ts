@@ -40,7 +40,7 @@ export function checkSearchFilter(search: string, itemName: string) {
 let lastAudio: number = 0;
 export function playAudio(path: string, volume: number = 1) {
 	// Empêche de jouer deux fois le même son en même temps
-	if (path.includes('combine') === false) {
+	if (path.includes('click') || path.includes('drag')) {
 		const now = Date.now();
 		if (now - lastAudio < 100) return;
 		lastAudio = now;
