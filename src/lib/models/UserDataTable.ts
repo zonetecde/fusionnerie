@@ -1,17 +1,8 @@
-import {
-	DataTypes,
-	Model,
-	type CreationOptional,
-	type InferAttributes,
-	type InferCreationAttributes
-} from '@sequelize/core';
+import { DataTypes, Model, type CreationOptional, type InferAttributes, type InferCreationAttributes } from '@sequelize/core';
 
 import { Attribute, PrimaryKey, AutoIncrement, NotNull } from '@sequelize/core/decorators-legacy';
 
-export default class UserDataTable extends Model<
-	InferAttributes<UserDataTable>,
-	InferCreationAttributes<UserDataTable>
-> {
+export default class UserDataTable extends Model<InferAttributes<UserDataTable>, InferCreationAttributes<UserDataTable>> {
 	@Attribute(DataTypes.INTEGER)
 	@PrimaryKey
 	@AutoIncrement

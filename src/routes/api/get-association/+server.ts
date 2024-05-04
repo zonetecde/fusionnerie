@@ -4,8 +4,12 @@ import ItemTable from '$lib/models/ItemTable';
 import sequelize from '$lib/server';
 import { json } from '@sveltejs/kit';
 
+/**
+ * Récupère le résultat de la combinaison de deux mots
+ */
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url }: { url: URL }) {
+	// Récupère les deux mots à combiner
 	const firstWord = url.searchParams.get('firstWord');
 	const secondWord = url.searchParams.get('secondWord');
 
@@ -21,6 +25,7 @@ export async function GET({ url }: { url: URL }) {
 		}
 	});
 
+	// Essaye l'inverse
 	if (!combinaison) {
 		combinaison = await CombinaisonTable.findOne({
 			where: {
@@ -30,39 +35,26 @@ export async function GET({ url }: { url: URL }) {
 		});
 	}
 
+	// Si la combinaison existe déjà
 	if (combinaison) {
-		// Retourne alors le résultat de la combaison là
+		// Retourne alors le résultat de la combaison là avec newDiscorvery = false
 		const resultat = await ItemTable.findByPk(combinaison.result);
 		if (resultat) {
 			return new Response(JSON.stringify(new Item(resultat.emoji, resultat.name, false)));
 		}
 	}
 
-	try {
-		// Requête à l'IA (sur mon serveur local)
-		return await askGpt(firstWord, secondWord);
-	} catch (e: any) {
-		// Refait une requête à l'IA (deuxième essai)
+	// Sinon, demande à l'IA 3 fois avant de renvoyer none
+	for (let i = 0; i < 3; i++) {
 		try {
-			console.log('deuxième essai');
-			await new Promise((resolve) => setTimeout(resolve, 500));
 			return await askGpt(firstWord, secondWord);
-		} catch (e: any) {
-			// refait une requête à l'IA (troisième essai)
-			try {
-				console.log('troisième essai');
-				// attend 1 seconde
-				await new Promise((resolve) => setTimeout(resolve, 1000));
-				return await askGpt(firstWord, secondWord);
-			} catch (e: any) {
-				// Combinaison impossible
-
-				console.log(e);
-			}
+		} catch (e) {
+			// Attend 500ms
+			await new Promise((resolve) => setTimeout(resolve, 500));
 		}
 	}
 
-	// Combinaison impossible
+	// Combinaison impossible / erreur
 	return new Response('none');
 }
 async function askGpt(firstWord: string, secondWord: string) {
@@ -88,10 +80,7 @@ async function askGpt(firstWord: string, secondWord: string) {
 
 	// Ajoute la combinaison et l'item à la db
 	const item = await ItemTable.findOrCreate({
-		where: sequelize.where(
-			sequelize.fn('lower', sequelize.col('name')),
-			sequelize.fn('lower', jsonObject.name)
-		),
+		where: sequelize.where(sequelize.fn('lower', sequelize.col('name')), sequelize.fn('lower', jsonObject.name)),
 		defaults: {
 			name: jsonObject.name,
 			emoji: jsonObject.emoji

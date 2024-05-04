@@ -2,6 +2,9 @@ import CombinaisonTable from '$lib/models/CombinaisonTable';
 import ItemTable from '$lib/models/ItemTable';
 import sequelize from '$lib/server';
 
+/**
+ * Récupère tous les items et combinaisons
+ */
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url }: { url: URL }) {
 	const allItems = await ItemTable.findAll();

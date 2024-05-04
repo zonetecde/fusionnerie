@@ -7,36 +7,6 @@
 	import { PlaygroundComponent, ShowCrafts } from '$lib/stores/LayoutStore';
 
 	let searchFilter = '';
-
-	onMount(async () => {
-		// Charge les items du joueur sauvergardé
-		const savedData = localStorage.getItem('playerItems');
-
-		if (savedData) {
-			PlayerItems.set(JSON.parse(savedData));
-			// Update les items du joueurs (au cas où il y a eu des modifs de l'emoji)
-			const response = await fetch('/fusionnerie/api/update-items', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: savedData
-			});
-			const updatedItems = await response.json();
-			PlayerItems.set(updatedItems);
-			PlayerCombinaisons.set(JSON.parse(localStorage.getItem('playerCombinaisons') || '[]'));
-		} else {
-			// Première connexion, donne au joueur les 4 items de départ
-			PlayerItems.set([
-				new Item('💧', 'Eau', false),
-				new Item('🔥', 'Feu', false),
-				new Item('🌍', 'Terre', false),
-				new Item('💨', 'Air', false)
-			]);
-
-			savePlayerData($PlayerItems, $PlayerCombinaisons);
-		}
-	});
 </script>
 
 <section class="w-full h-full relative flex flex-row">
@@ -51,13 +21,9 @@
 	{#if $ShowCrafts.length !== 0}
 		<div class="md:block hidden w-2/12 pt-6 px-1 overflow-y-auto">
 			{#each $ShowCrafts as combinaison}
-				<div
-					class="flex flex-row items-center justify-between px-4 py-2 bg-[#e7edf0] border-2 border-[#20423a] rounded-xl mb-2"
-				>
+				<div class="flex flex-row items-center justify-between px-4 py-2 bg-[#e7edf0] border-2 border-[#20423a] rounded-xl mb-2">
 					<div class="flex flex-row items-center">
-						<span class="text-xl"
-							>{combinaison.firstWord} ➕ {combinaison.secondWord} ➡️ {combinaison.result}</span
-						>
+						<span class="text-xl">{combinaison.firstWord} ➕ {combinaison.secondWord} ➡️ {combinaison.result}</span>
 					</div>
 				</div>
 			{/each}
@@ -78,14 +44,7 @@
 	class="absolute -translate-y-1/2 -top-2.5 right-[230px] md:right-[320px] duration-150 hover:bg-[#afcbda] bg-[#e7edf0] border-4 border-[#534f53] rounded-2xl w-12 h-12 p-1"
 	on:click={() => $PlaygroundComponent.clear()}
 >
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		fill="none"
-		viewBox="0 0 24 24"
-		stroke-width="1.5"
-		stroke="currentColor"
-		class=""
-	>
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="">
 		<path
 			stroke-linecap="round"
 			stroke-linejoin="round"

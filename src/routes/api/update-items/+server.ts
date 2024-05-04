@@ -1,6 +1,9 @@
 import ItemTable from '$lib/models/ItemTable';
 import sequelize from '$lib/server';
 
+/**
+ * Met à jour les emojis des items de l'utilisateur
+ */
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request }: { request: Request }) {
 	const body = await request.json();
@@ -10,6 +13,7 @@ export async function POST({ request }: { request: Request }) {
 		return new Response('Erreur');
 	}
 
+	// Met à jour les emojis des items de l'utilisateur
 	await Promise.allSettled(
 		body.map(async (item: any) => {
 			const { emoji, name, id } = item;
@@ -20,11 +24,13 @@ export async function POST({ request }: { request: Request }) {
 					name: name
 				}
 			});
+
 			if (itemInDb) {
 				item.emoji = itemInDb.emoji;
 			}
 		})
 	);
 
+	// Retourne les items avec les emojis mis à jour
 	return new Response(JSON.stringify(body));
 }

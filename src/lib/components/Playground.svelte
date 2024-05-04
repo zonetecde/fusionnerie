@@ -15,12 +15,7 @@
 		}
 	});
 
-	export function placeItem(
-		item: Item,
-		x: number = -1,
-		y: number = -1,
-		checkForAssociation = false
-	) {
+	export function placeItem(item: Item, x: number = -1, y: number = -1, checkForAssociation = false) {
 		// copy the item to avoid modifying the original
 		item = { ...item };
 		item.id = randomNumber(0, 1000000);
@@ -47,10 +42,7 @@
 	function generateRandomX() {
 		const divPlayground = document.getElementById('playground');
 		if (divPlayground) {
-			return randomNumber(
-				divPlayground.clientWidth / 2 - SPAWNING_SPACE,
-				divPlayground.clientWidth / 2 + SPAWNING_SPACE
-			);
+			return randomNumber(divPlayground.clientWidth / 2 - SPAWNING_SPACE, divPlayground.clientWidth / 2 + SPAWNING_SPACE);
 		}
 
 		return 0;
@@ -58,10 +50,7 @@
 	function generateRandomY() {
 		const divPlayground = document.getElementById('playground');
 		if (divPlayground) {
-			return randomNumber(
-				divPlayground.clientHeight / 2 - SPAWNING_SPACE,
-				divPlayground.clientHeight / 2 + SPAWNING_SPACE
-			);
+			return randomNumber(divPlayground.clientHeight / 2 - SPAWNING_SPACE, divPlayground.clientHeight / 2 + SPAWNING_SPACE);
 		}
 
 		return 0;
@@ -70,12 +59,6 @@
 
 <div class="w-full h-full relative overflow-hidden" id="playground">
 	{#each itemsOnBoard as item}
-		<ItemComponent
-			{item}
-			isInPlayground
-			x={item.x}
-			y={item.y}
-			checkForAssociationOnMount={item.checkForAssociation}
-		/>
+		<ItemComponent {item} isInPlayground x={item.x} y={item.y} checkForAssociationOnMount={item.checkForAssociation} />
 	{/each}
 </div>

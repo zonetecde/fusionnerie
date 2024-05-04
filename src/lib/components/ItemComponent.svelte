@@ -1,12 +1,6 @@
 <script lang="ts">
 	import type Item from '$lib/models/Item';
-	import {
-		DraggingItem,
-		FetchingItems,
-		PlaygroundComponent,
-		ShowCrafts,
-		isMobile
-	} from '$lib/stores/LayoutStore';
+	import { DraggingItem, FetchingItems, PlaygroundComponent, ShowCrafts, isMobile } from '$lib/stores/LayoutStore';
 	import { PlayerCombinaisons, PlayerItems, savePlayerData } from '$lib/stores/PlayerDataStore';
 	import { checkCollision } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
@@ -20,12 +14,19 @@
 
 	let isBeingDragged = false;
 	let thisComponent: HTMLButtonElement;
-	let isMouseUp = false;
-	let didPlaceOnPlayground = false;
 
+	/**
+	 * Place l'item actuelle sur le playground
+	 * Est appelé lorsque l'utilisateur clique sur l'item seulement
+	 */
+	let didPlaceOnPlayground = false; // Empêche de placer l'item plusieurs fois
 	function placeOnPlayground() {
+		// Si l'item est dans le conteneur à item et que on l'a pas déjà placé il y amoins de 140ms (pour éviter certains bugs)
 		if (!isInPlayground && !didPlaceOnPlayground) {
+			// Place l'item sur le playground
 			$PlaygroundComponent.placeItem(item);
+
+			// Empêche de placer l'item plusieurs fois
 			didPlaceOnPlayground = true;
 			setTimeout(() => {
 				didPlaceOnPlayground = false;
@@ -52,11 +53,18 @@
 		window.removeEventListener('pointerup', handleMouseUp);
 	});
 
+	/**
+	 * Gère la fin du drag de l'item
+	 */
+	let isMouseUp = false; // Empêche le drag si le clique est relaché (= clique court)
 	function handleMouseUp(e: any) {
+		// Si l'item est dans le playground
 		if (isInPlayground) {
+			// On vérifie si l'item est en collision avec un autre item
 			checkForAssociation();
 			isBeingDragged = false;
 		} else {
+			// Si l'item est dans le conteneur à item, on prévient que le clique est relaché (pour éviter le drag)
 			isMouseUp = true;
 			setTimeout(() => {
 				isMouseUp = false;
@@ -64,22 +72,28 @@
 		}
 	}
 
+	/**
+	 * Gère le début du drag de l'item
+	 */
 	function handleMouseDown(e: any) {
-		// Si clique gauche
+		// Si le clique gauche est appuyé
 		if (e.button === 0) {
+			// Si il est dans le playground - simple drag dedans
 			if (isInPlayground) {
 				isBeingDragged = true;
 			} else {
+				// Sinon, on attend 100ms pour voir si le clique est relaché
 				setTimeout(() => {
+					// Si le clique est toujours appuyé et que l'utilisateur n'est pas sur mobile (pour éviter le drag sur mobile)
 					if (!isMouseUp && !$isMobile)
-						// Crée une copie de l'item pour le drag sur la fenêtre
+						// On commence le drag qui va être géré dans page.svelte
 						DraggingItem.set({
 							item: item,
 							x: e.clientX - 85,
 							y: e.clientY - 85
 						});
 					else {
-						// Place l'item sur le playground
+						// Sinon c'est qu'un simple clique - place l'item sur le playground
 						placeOnPlayground();
 					}
 				}, 100);
@@ -92,11 +106,15 @@
 		}
 	}
 
+	/**
+	 * Gère le drag de l'item dans le playground
+	 */
 	function handleMouseMove(event: MouseEvent) {
-		if (isBeingDragged) {
-			// Prend la position de la sourie par rapport à la div playground
+		if (isBeingDragged && isInPlayground) {
+			// Prend la position de la souris par rapport à la div playground
 			const divPlayground = document.getElementById('playground');
 			if (divPlayground) {
+				// Bouge l'item à la position de la souris
 				const rect = divPlayground.getBoundingClientRect();
 				x = event.clientX - rect.left - 25;
 				y = event.clientY - rect.top - 25;
@@ -106,34 +124,47 @@
 		}
 	}
 
+	/**
+	 * Vérifie si l'item est en collision avec un autre item
+	 */
 	async function checkForAssociation() {
+		// Si l'item n'est pas en drag, on ne fait rien
 		if (!isBeingDragged) return;
 
 		// Regarde si après le drag l'item collide avec un élément
 		const divPlayground = document.getElementById('playground');
 		if (divPlayground) {
+			// Pour chaque item dans le playground
 			for (var i = 0; i < divPlayground.children.length; i++) {
-				const itemButton = divPlayground.children[i];
-				if (itemButton.id.includes('itemcomp_')) {
-					const itemName = itemButton.id.split('itemcomp_')[1];
-					const itemId = itemButton.id.split('itemcomp_')[0];
+				const colliderItemButton = divPlayground.children[i];
+				if (colliderItemButton.id.includes('itemcomp_')) {
+					// Récupère le nom de l'item et son id
+					const colliderItemName = colliderItemButton.id.split('itemcomp_')[1];
+					const colliderItemId = colliderItemButton.id.split('itemcomp_')[0];
 
-					if (itemButton !== thisComponent) {
-						// Check collision
-						if (checkCollision(itemButton, thisComponent)) {
+					// Si l'item n'est pas lui même
+					if (colliderItemButton !== thisComponent) {
+						// Check collision entre ce component et l'item
+						if (checkCollision(colliderItemButton, thisComponent)) {
+							// On est en collision
 							// Association entre item.name et itemName
-							FetchingItems.set([...$FetchingItems, item.id, parseInt(itemId)]);
-							const combinedItem = await handleDoAssociation(item.name, itemName);
-							FetchingItems.set(
-								$FetchingItems.filter((x) => x !== item.id && x !== parseInt(itemId))
-							);
+							// Prévient que ces deux items sont en train d'être combinés (animation)
+							FetchingItems.set([...$FetchingItems, item.id, parseInt(colliderItemId)]);
+
+							// Fait l'association
+							const combinedItem = await handleDoAssociation(item.name, colliderItemName);
+
+							// Enlève les items de la liste des items en train d'être combinés (arrête l'animation)
+							FetchingItems.set($FetchingItems.filter((x) => x !== item.id && x !== parseInt(colliderItemId)));
 
 							// Si la combinaison a réussi
 							if (combinedItem !== undefined) {
-								// Enlève itemButton et remplace ce component par le nouvelle item
-								itemButton.remove();
+								// Enlève l'item avec lequel il y a eu collision et remplace ce component par le nouvelle item
+								colliderItemButton.remove();
 								$PlaygroundComponent.modifyItem(item, combinedItem);
 							}
+
+							// Sauvegarde les données
 							savePlayerData($PlayerItems, $PlayerCombinaisons);
 							break;
 						}
@@ -143,32 +174,42 @@
 		}
 	}
 
+	/**
+	 * Fait l'association entre deux items
+	 */
 	async function handleDoAssociation(firstWord: string, secondWord: string) {
 		// Requête au back-end
-		const response = await fetch(
-			`/fusionnerie/api/get-association?firstWord=${firstWord}&secondWord=${secondWord}`
-		);
+		const response = await fetch(`/fusionnerie/api/get-association?firstWord=${firstWord}&secondWord=${secondWord}`);
 
 		const newItemJson = await response.text();
 
+		// Si la combinaison n'a pas fonctionné (erreur ou autre)
 		if (newItemJson === 'none') {
 			// Pas de combinaison
 			return undefined;
 		}
 
+		// Sinon, on a un nouvel item
 		const combinedItem = JSON.parse(newItemJson) as Item;
 
 		// Regarde si l'item a déjà été découvert par l'utilisateur
 		if (!$PlayerItems.some((x) => x.name === combinedItem.name)) {
+			// Si non, on l'ajoute
 			PlayerItems.set([combinedItem, ...$PlayerItems]);
 		}
 
-		PlayerCombinaisons.set([
-			{ firstWord: firstWord, secondWord: secondWord, result: combinedItem.name },
-			...$PlayerCombinaisons
-		]);
+		// On ajoute la combinaison à la liste des combinaisons si elle n'existe pas déjà
+		const combinationExists = $PlayerCombinaisons.some(
+			(combination) =>
+				(combination.firstWord === firstWord && combination.secondWord === secondWord && combination.result === combinedItem.name) ||
+				(combination.firstWord === secondWord && combination.secondWord === firstWord && combination.result === combinedItem.name)
+		);
 
-		// Retounr l'item
+		if (!combinationExists) {
+			PlayerCombinaisons.set([{ firstWord: firstWord, secondWord: secondWord, result: combinedItem.name }, ...$PlayerCombinaisons]);
+		}
+
+		// Retourne le nouvel item
 		return combinedItem;
 	}
 </script>
@@ -176,9 +217,7 @@
 <button
 	class={'relative border-2 border-[#717e79] shadow-lg shadow-[#2a2f44] bg-[#d6ecf3] md:text-xl rounded-lg px-3 h-fit py-1 hover:scale-110 duration-150 select-none outline-none w-max ' +
 		(item.firstDiscovery && isInPlayground === false ? ' rounded-br-none mb-3 ' : '') +
-		($FetchingItems.includes(item.id) && isInPlayground === true
-			? ' bg-slate-600 shadow-none border-[#2f3834] scale-75 hover:scale-75 '
-			: '')}
+		($FetchingItems.includes(item.id) && isInPlayground === true ? ' bg-slate-600 shadow-none border-[#2f3834] scale-75 hover:scale-75 ' : '')}
 	style={isInPlayground ? `position: absolute; left: ${x}px; top: ${y}px` : ''}
 	id={$FetchingItems.includes(item.id) ? '' : item.id + '_itemcomp_' + item.name}
 	on:click={placeOnPlayground}
@@ -211,22 +250,8 @@
 			style="shape-rendering: auto; display: block; background: transparent;"
 			xmlns:xlink="http://www.w3.org/1999/xlink"
 			><g
-				><circle
-					stroke-dasharray="164.93361431346415 56.97787143782138"
-					r="35"
-					stroke-width="10"
-					stroke="#00a98f"
-					fill="none"
-					cy="50"
-					cx="50"
-				>
-					<animateTransform
-						keyTimes="0;1"
-						values="0 50 50;360 50 50"
-						dur="1s"
-						repeatCount="indefinite"
-						type="rotate"
-						attributeName="transform"
+				><circle stroke-dasharray="164.93361431346415 56.97787143782138" r="35" stroke-width="10" stroke="#00a98f" fill="none" cy="50" cx="50">
+					<animateTransform keyTimes="0;1" values="0 50 50;360 50 50" dur="1s" repeatCount="indefinite" type="rotate" attributeName="transform"
 					></animateTransform>
 				</circle><g></g></g
 			></svg
