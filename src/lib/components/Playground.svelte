@@ -4,16 +4,28 @@
 	import { onMount } from 'svelte';
 	import ItemComponent from './ItemComponent.svelte';
 	import { randomNumber } from '$lib/utils';
+	import { PlayerItems } from '$lib/stores/PlayerDataStore';
 
 	let itemsOnBoard: Item[] = [];
 	let SPAWNING_SPACE = 100;
+	let totalDecouvert = 0;
+	$: itemsDecouvertParVous = $PlayerItems.filter((x) => x.firstDiscovery).length;
 
-	onMount(() => {
+	onMount(async () => {
 		SPAWNING_SPACE = (document.getElementById('playground')!.clientHeight * 0.6) / 3;
 		if (SPAWNING_SPACE < 80) {
 			SPAWNING_SPACE = 80;
 		}
+
+		await setTotalDecouvert();
+		setInterval(async () => {
+			await setTotalDecouvert();
+		}, 3000);
 	});
+
+	async function setTotalDecouvert() {
+		totalDecouvert = await fetch('/fusionnerie/api/total-decouvert').then((res) => res.json());
+	}
 
 	export function placeItem(item: Item, x: number = -1, y: number = -1, checkForAssociation = false) {
 		// copy the item to avoid modifying the original
@@ -61,4 +73,25 @@
 	{#each itemsOnBoard as item}
 		<ItemComponent {item} isInPlayground x={item.x} y={item.y} checkForAssociationOnMount={item.checkForAssociation} />
 	{/each}
+</div>
+<div class="hidden md:block">
+	<p
+		class="absolute top-0 right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
+	>
+		<span class="mono font-bold text-lg md:text-xl">{totalDecouvert.toString().padStart(6, '0')}</span> items découvert par la communauté
+	</p>
+
+	<p
+		class="absolute top-10 md:top-12 right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
+	>
+		<span class="mono font-bold text-lg md:text-xl">{itemsDecouvertParVous.toString().padStart(6, '0')}</span> item{itemsDecouvertParVous > 1
+			? 's'
+			: ''} découvert par vous
+	</p>
+	<p
+		class="absolute top-20 md:top-24 right-0 pr-3 pl-3 pt-1.5 md:pt-3 pb-1 md:pb-2 border-l-4 border-b-4 border-[#534f53] flex items-center gap-x-2 rounded-bl-xl md:text-base text-sm"
+	>
+		<span class="mono font-bold text-lg md:text-xl">{$PlayerItems.length.toString().padStart(6, '0')}</span> item{$PlayerItems.length > 1 ? 's' : ''}
+		possédé{$PlayerItems.length > 1 ? 's' : ''}
+	</p>
 </div>
