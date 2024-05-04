@@ -227,7 +227,7 @@
 {/if}
 
 {#if eraseDataWarningVisible}
-	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
+	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center z-50">
 		<div class="bg-[#e7edf0] w-96 h-60 px-4 rounded-xl flex flex-col items-center justify-center relative">
 			<h2 class="text-xl">Suppression de votre progrès</h2>
 			<p class="text-center mt-5">
@@ -262,7 +262,7 @@
 {/if}
 
 {#if saveDataModalVisible}
-	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
+	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center z-50">
 		<div class="bg-[#e7edf0] w-96 px-4 h-60 rounded-xl flex flex-col items-center justify-center relative">
 			<h2 class="text-xl">Sauvegarde de votre progrès</h2>
 
@@ -287,7 +287,7 @@
 {/if}
 
 {#if loadDataModalVisible}
-	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
+	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center z-50">
 		<div class="bg-[#e7edf0] w-96 h-52 rounded-xl flex flex-col items-center justify-center relative">
 			<h2 class="text-xl">Chargement de votre progrès</h2>
 
@@ -310,7 +310,7 @@
 {/if}
 
 {#if cheatWarningVisible}
-	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center">
+	<div class="fixed top-0 left-0 w-screen h-screen bg-[#000000a3] flex items-center justify-center z-50">
 		<div class="bg-[#e7edf0] w-96 h-56 px-3 rounded-xl flex flex-col items-center justify-center relative">
 			<h2 class="text-xl">Attention !</h2>
 			<p class="text-center">
@@ -321,11 +321,6 @@
 			<button
 				class="bg-[#20423a] text-white px-4 py-2 rounded-xl mt-4"
 				on:click={() => {
-					toast('Cette fonctionnalité est réservée au développeur', {
-						icon: '🔓'
-					});
-					return;
-
 					cheatWarningVisible = false;
 					unlockAllItems();
 				}}
@@ -361,7 +356,13 @@
 </button>
 <button
 	class="absolute bottom-0 right-44 bg-[#ffffff71] px-4 md:block hidden text-sm hover:bg-[#ffffffad]"
-	on:click={() => (cheatWarningVisible = true)}
+	on:click={() => {
+		toast('Cette fonctionnalité est réservée au développeur', {
+			icon: '🔓'
+		});
+		return;
+		cheatWarningVisible = true;
+	}}
 >
 	Tricher
 </button>
