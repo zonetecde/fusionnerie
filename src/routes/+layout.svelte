@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import { isMobile } from '$lib/stores/LayoutStore';
 
 	let saveDataModalVisible = false;
 	let loadDataModalVisible = false;
@@ -16,6 +17,11 @@
 		if (_uniqueId) {
 			uniqueId = _uniqueId;
 		}
+
+		isMobile.set(window.innerWidth < 768);
+		window.onresize = () => {
+			isMobile.set(window.innerWidth < 768);
+		};
 	});
 
 	async function unlockAllItems() {

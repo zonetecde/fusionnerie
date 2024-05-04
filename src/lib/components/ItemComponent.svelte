@@ -1,6 +1,12 @@
 <script lang="ts">
 	import type Item from '$lib/models/Item';
-	import { FetchingItems, PlaygroundComponent, ShowCrafts } from '$lib/stores/LayoutStore';
+	import {
+		DraggingItem,
+		FetchingItems,
+		PlaygroundComponent,
+		ShowCrafts,
+		isMobile
+	} from '$lib/stores/LayoutStore';
 	import { PlayerCombinaisons, PlayerItems, savePlayerData } from '$lib/stores/PlayerDataStore';
 	import { checkCollision } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
@@ -10,12 +16,21 @@
 	export let isInPlayground: boolean = false;
 	export let x: number = 0;
 	export let y: number = 0;
+	export let checkForAssociationOnMount: boolean = false; // A la fin du drag
 
 	let isBeingDragged = false;
 	let thisComponent: HTMLButtonElement;
+	let isMouseUp = false;
+	let didPlaceOnPlayground = false;
 
 	function placeOnPlayground() {
-		if (!isInPlayground) $PlaygroundComponent.placeItem(item);
+		if (!isInPlayground && !didPlaceOnPlayground) {
+			$PlaygroundComponent.placeItem(item);
+			didPlaceOnPlayground = true;
+			setTimeout(() => {
+				didPlaceOnPlayground = false;
+			}, 140);
+		}
 	}
 
 	onMount(() => {
@@ -23,6 +38,11 @@
 		window.addEventListener('mouseup', handleMouseUp);
 		window.addEventListener('pointermove', handleMouseMove);
 		window.addEventListener('pointerup', handleMouseUp);
+
+		if (checkForAssociationOnMount) {
+			isBeingDragged = true;
+			checkForAssociation();
+		}
 	});
 
 	onDestroy(() => {
@@ -33,8 +53,15 @@
 	});
 
 	function handleMouseUp(e: any) {
-		checkForAssociation();
-		isBeingDragged = false;
+		if (isInPlayground) {
+			checkForAssociation();
+			isBeingDragged = false;
+		} else {
+			isMouseUp = true;
+			setTimeout(() => {
+				isMouseUp = false;
+			}, 200);
+		}
 	}
 
 	function handleMouseDown(e: any) {
@@ -43,7 +70,19 @@
 			if (isInPlayground) {
 				isBeingDragged = true;
 			} else {
-				// Crée une copie de l'item pour le drag sur la fenêtre
+				setTimeout(() => {
+					if (!isMouseUp && !$isMobile)
+						// Crée une copie de l'item pour le drag sur la fenêtre
+						DraggingItem.set({
+							item: item,
+							x: e.clientX - 85,
+							y: e.clientY - 85
+						});
+					else {
+						// Place l'item sur le playground
+						placeOnPlayground();
+					}
+				}, 100);
 			}
 		}
 		// Si clique droit
@@ -61,6 +100,8 @@
 				const rect = divPlayground.getBoundingClientRect();
 				x = event.clientX - rect.left - 25;
 				y = event.clientY - rect.top - 25;
+				item.x = x;
+				item.y = y;
 			}
 		}
 	}
@@ -91,7 +132,6 @@
 							if (combinedItem !== undefined) {
 								// Enlève itemButton et remplace ce component par le nouvelle item
 								itemButton.remove();
-
 								$PlaygroundComponent.modifyItem(item, combinedItem);
 							}
 							savePlayerData($PlayerItems, $PlayerCombinaisons);

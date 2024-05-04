@@ -15,10 +15,19 @@
 		}
 	});
 
-	export function placeItem(item: Item) {
+	export function placeItem(
+		item: Item,
+		x: number = -1,
+		y: number = -1,
+		checkForAssociation = false
+	) {
 		// copy the item to avoid modifying the original
 		item = { ...item };
 		item.id = randomNumber(0, 1000000);
+		item.x = x === -1 ? generateRandomX() : x;
+		item.y = y === -1 ? generateRandomY() : y;
+		item.checkForAssociation = checkForAssociation;
+
 		itemsOnBoard = [...itemsOnBoard, item];
 	}
 
@@ -30,6 +39,8 @@
 		const index = itemsOnBoard.indexOf(oldItem);
 		if (index !== -1) {
 			itemsOnBoard[index] = newItem;
+			itemsOnBoard[index].x = oldItem.x;
+			itemsOnBoard[index].y = oldItem.y;
 		}
 	}
 
@@ -59,6 +70,12 @@
 
 <div class="w-full h-full relative overflow-hidden" id="playground">
 	{#each itemsOnBoard as item}
-		<ItemComponent {item} isInPlayground x={generateRandomX()} y={generateRandomY()} />
+		<ItemComponent
+			{item}
+			isInPlayground
+			x={item.x}
+			y={item.y}
+			checkForAssociationOnMount={item.checkForAssociation}
+		/>
 	{/each}
 </div>
