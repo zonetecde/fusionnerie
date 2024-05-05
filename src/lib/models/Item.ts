@@ -10,6 +10,7 @@ export default class Item {
 	y: number; // ""
 
 	checkForAssociation: boolean = false; // Est-ce que l'item doit être vérifié pour une association dès son placement ?
+	drag: boolean = false; // Est-ce que l'item est en train d'être draggé (dès son placement)
 
 	constructor(emoji: string, name: string, firstDiscovery: boolean) {
 		this.id = randomNumber(1, 9999999999); // Génère un id unique pour l'item

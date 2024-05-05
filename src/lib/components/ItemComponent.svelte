@@ -14,7 +14,7 @@
 
 	// Attention ! A chaque fois qu'on ajoute une variable ici, il faut changer l'index dans le .ctx (+page.svelte)
 	let isNewItem = false;
-	let isBeingDragged = false;
+	export let isBeingDragged = false;
 	let thisComponent: HTMLButtonElement;
 
 	/**
@@ -45,6 +45,14 @@
 		if (checkForAssociationOnMount) {
 			isBeingDragged = true;
 			checkForAssociation();
+		}
+
+		// Si dès son placement on est en train de le drag (double clique sur l'item dans le playground pour duplication)
+		// alors on enlève le drag après 100ms pour éviter de le déplacer une seconde fois
+		if (isBeingDragged) {
+			setTimeout(() => {
+				item.drag = false;
+			}, 100);
 		}
 	});
 
@@ -259,7 +267,7 @@
 	on:pointerup={handleMouseUp}
 	bind:this={thisComponent}
 >
-	<span class="">
+	<span class="w-full h-full">
 		{item.emoji}
 		{item.name}
 	</span>
