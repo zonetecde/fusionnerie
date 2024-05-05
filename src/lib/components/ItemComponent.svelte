@@ -17,6 +17,10 @@
 	export let isBeingDragged = false;
 	let thisComponent: HTMLButtonElement;
 
+	export function getReference() {
+		return thisComponent;
+	}
+
 	/**
 	 * Place l'item actuelle sur le playground
 	 * Est appelé lorsque l'utilisateur clique sur l'item seulement
@@ -68,11 +72,12 @@
 	 */
 	let isMouseUp = false; // Empêche le drag si le clique est relaché (= clique court)
 	function handleMouseUp(e: any) {
-		// Si l'item est dans le playground
-		if (isInPlayground) {
+		if (isInPlayground && isBeingDragged) {
+			// Si l'item est dans le playground
 			// On vérifie si l'item est en collision avec un autre item
 			checkForAssociation();
 			isBeingDragged = false;
+
 			playAudio(`/fusionnerie/audio/click${randomNumber(1, 3)}.mp3`);
 		} else {
 			// Si l'item est dans le conteneur à item, on prévient que le clique est relaché (pour éviter le drag)

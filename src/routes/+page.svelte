@@ -33,7 +33,7 @@
 	function handleMouseUp(e: any) {
 		if ($DraggingItem !== undefined) {
 			// Regarde si l'item est dans le playground
-			if (checkCollision(draggedItemComponent.$$.ctx[5], document.getElementById('playground')!)) {
+			if (checkCollision(draggedItemComponent.getReference(), document.getElementById('playground')!)) {
 				// Place l'item sur le playground à la position du curseur
 				playgroundComponent.placeItem($DraggingItem.item, $DraggingItem.x, $DraggingItem.y, true);
 			}
