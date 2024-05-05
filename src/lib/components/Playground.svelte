@@ -79,6 +79,10 @@
 		if (event.target === event.currentTarget) {
 			showSearchMenu = true;
 			searchMenuPosition = { x: event.offsetX, y: event.offsetY };
+			// Sélectionne tout le texte dans l'input
+			setTimeout(() => {
+				(document.getElementById('input-search') as HTMLInputElement)?.select();
+			}, 0);
 		} else {
 			// Récupère l'id de l'item cliqué
 			const id: string = (event.target as HTMLElement)?.parentElement?.id || '';
@@ -118,7 +122,7 @@
 			autocomplete="off"
 			id="input-search"
 			type="text"
-			class="w-full h-8 border border-gray-300 rounded-md outline-none p-2"
+			class="w-full h-8 border border-gray-300 rounded-md outline-none p-2 accent-slate-400"
 			placeholder="Rechercher un item..."
 			bind:value={searchFilter}
 			autofocus
@@ -163,3 +167,10 @@
 		possédé{$PlayerItems.length > 1 ? 's' : ''}
 	</p>
 </div>
+
+<style>
+	::selection {
+		background-color: #6fafda;
+		color: #000000;
+	}
+</style>
