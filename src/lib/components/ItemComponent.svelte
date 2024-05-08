@@ -12,10 +12,10 @@
 	export let y: number = 0;
 	export let checkForAssociationOnMount: boolean = false; // A la fin du drag
 
-	// Attention ! A chaque fois qu'on ajoute une variable ici, il faut changer l'index dans le .ctx (+page.svelte)
-	let isNewItem = false;
+	let newItemAnimation = false;
 	export let isBeingDragged = false;
 	let thisComponent: HTMLButtonElement;
+	let changeBorderColor = false;
 
 	export function getReference() {
 		return thisComponent;
@@ -193,10 +193,12 @@
 
 								// Si c'est un nouvel item
 								if (combinedItem.firstDiscovery) {
-									isNewItem = true;
+									newItemAnimation = true;
+									// Met les bordures en multi-couleurs
+									changeBorderColor = true;
 
 									setTimeout(() => {
-										isNewItem = false;
+										newItemAnimation = false;
 									}, 1000);
 								}
 							}
@@ -251,7 +253,7 @@
 	}
 </script>
 
-{#if isInPlayground && isNewItem}
+{#if isInPlayground && newItemAnimation}
 	<img
 		src="/fusionnerie/confetti.gif"
 		alt="confetti"
@@ -263,7 +265,8 @@
 <button
 	class={'relative border-2 border-[#717e79] shadow-lg shadow-[#2a2f44] bg-[#d6ecf3] md:text-xl rounded-lg px-3 h-fit py-1 hover:scale-110 duration-150 select-none outline-none w-max ' +
 		(item.firstDiscovery && isInPlayground === false ? ' rounded-br-none mb-3 ' : '') +
-		($FetchingItems.includes(item.id) && isInPlayground === true ? ' bg-slate-600 shadow-none border-[#2f3834] scale-75 hover:scale-75 ' : '')}
+		($FetchingItems.includes(item.id) && isInPlayground === true ? ' bg-slate-600 shadow-none border-[#2f3834] scale-75 hover:scale-75 ' : '') +
+		(changeBorderColor ? ' rainbow-border ' : '')}
 	style={isInPlayground ? `position: absolute; left: ${x}px; top: ${y}px` : ''}
 	id={$FetchingItems.includes(item.id) ? '' : item.id + '_itemcomp_' + item.name}
 	on:click={placeOnPlayground}
@@ -303,3 +306,12 @@
 			></svg
 		>{/if}
 </button>
+
+<style>
+	.rainbow-border {
+		border: 3px solid transparent;
+		border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+		border-image-slice: 1;
+		border-radius: 0.5rem;
+	}
+</style>
