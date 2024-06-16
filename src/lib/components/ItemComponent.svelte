@@ -200,6 +200,8 @@
 									setTimeout(() => {
 										newItemAnimation = false;
 									}, 1000);
+								} else {
+									changeBorderColor = false;
 								}
 							}
 
