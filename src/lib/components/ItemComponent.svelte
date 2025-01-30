@@ -4,6 +4,7 @@
 	import { PlayerCombinaisons, PlayerItems, savePlayerData } from '$lib/stores/PlayerDataStore';
 	import { checkCollision, playAudio, randomNumber } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
+	import toast from 'svelte-french-toast';
 
 	export let item: Item;
 
@@ -226,6 +227,8 @@
 
 		// Si la combinaison n'a pas fonctionné (erreur ou autre)
 		if (newItemJson === 'none') {
+			toast.error("Désolé, l'IA est indisponible pour le moment.", { duration: 2000 });
+
 			// Pas de combinaison
 			return undefined;
 		}

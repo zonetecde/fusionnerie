@@ -45,7 +45,6 @@ export async function GET({ url }: { url: URL }) {
 	}
 
 	// Sinon, demande à l'IA 3 fois avant de renvoyer none
-
 	return await askGpt(firstWord, secondWord);
 }
 async function askGpt(firstWord: string, secondWord: string) {
