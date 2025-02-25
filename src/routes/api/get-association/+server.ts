@@ -62,7 +62,7 @@ async function askGpt(firstWord: string, secondWord: string) {
 		const jsonObject = JSON.parse(text);
 
 		// Met la première lettre en majuscule
-		jsonObject.name = jsonObject.name.charAt(0).toUpperCase() + jsonObject.name.slice(1);
+		jsonObject.name = jsonObject.name.charAt(0).toUpperCase() + jsonObject.name.slice(1) + " (Pénis)";
 
 		let emojisArray = jsonObject.emoji.match(/\p{Emoji}+/gu) || [];
 		jsonObject.emoji = emojisArray.join('');
