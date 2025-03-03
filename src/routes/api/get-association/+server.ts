@@ -85,7 +85,7 @@ async function askGpt(firstWord: string, secondWord: string) {
 		});
 
 		return new Response(JSON.stringify(new Item(item[0].emoji, item[0].name, item[1])));
-	} catch (e) {
-		return new Response('none');
+	} catch (e: any) {
+		return new Response('none' + e.toString());
 	}
 }

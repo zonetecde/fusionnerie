@@ -226,8 +226,9 @@
 		const newItemJson = await response.text();
 
 		// Si la combinaison n'a pas fonctionné (erreur ou autre)
-		if (newItemJson === 'none') {
+		if (newItemJson.startsWith('none')) {
 			toast.error("Désolé, l'IA est indisponible pour le moment.", { duration: 2000 });
+			console.log(newItemJson);
 
 			// Pas de combinaison
 			return undefined;
