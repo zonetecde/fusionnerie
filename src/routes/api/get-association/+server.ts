@@ -59,7 +59,7 @@ async function askGpt(firstWord: string, secondWord: string) {
 		// Enlève si nécessaire l'indicateur json
 
 		// remove all the new lines
-		text = text.replace(/\n/g, '');
+		text = text!.replace(/\n/g, '');
 
 		if (text.startsWith('```json')) text = text.slice(7, -3);
 		else if (text.startsWith('```')) text = text.slice(3, -3);
